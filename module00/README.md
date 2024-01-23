@@ -266,3 +266,167 @@ Tip dökümü, verilen verinin dönüştürüleceği tipi açıkça belirterek v
 Örtük tür dönüştürme, derleyici veya çalışma zamanı veri türlerini otomatik olarak dönüştürdüğünde gerçekleşir. JavaScript gevşek tipli bir dildir ve çoğu zaman operatörler bir değeri otomatik olarak doğru tipe dönüştürür.
 
 
+# Data Structures
+Veri yapısı, verileri etkin erişim ve değişikliğe izin verecek şekilde düzenlemek, yönetmek ve saklamak için kullanılan bir formattır. ilkel ve ilkel olmayan data structurelarımız vardır js'de. Primitve data structurelarımız standart progamlama dili ile birlikte gelir. Non primitive data structurelarımız varsayılan olarak gelmez ve kullanmak istiyorsak bunları kodlamamız gerekiyor.
+
+## Indexed Collections
+İndeksli Koleksiyonlar, sayısal indekslere sahip koleksiyonlardır, yani bir indeks değerine göre sıralanan veri koleksiyonlarıdır. JavaScript'te dizi, dizinli bir koleksiyondur. Dizi, sayısal bir indeksi olan sıralı bir değerler kümesidir.
+###### #syntax 
+
+```
+let arr = new Array( element0, element1, ... );   
+let arr = Array( element0, element1, ... );       
+let arr = [ element0, element1, ... ];
+// Creating an array with given size;
+let arr = new Array(6); 
+let arr = Array(6);
+let arr = [];
+arr.length = 6;
+```
+
+#concat #methodArray
+İki veya daha fazla diziyi birleştirir. Bu yöntem, mevcut dizileri değiştirmeden yeni bir dizi döndürür.
+```
+let myArr = ["1", "2", "3"];
+myArr = myArr.concat("a", "b", "c");
+console.log(myArr); // [ '1', '2', '3', 'a', 'b', 'c' ]
+```
+
+
+Objelerde ki gibi iki veriyi birbiri ile karşılaştırırken adres temelli karşılaştırır yani içeriği kontrol ederek değil.
+
+```
+let value = ["hi"];
+let sameContentValue = ["hi"];
+if (value == sameContentValue) {
+	console.log("value == sameContentValue");
+} else {
+	console.log("value != sameContentValue"); // run
+}
+
+  
+
+let refValue = value;
+if (value == refValue) {
+	console.log("value == refValue"); // run
+} else {
+	console.log("value != refValue");
+}
+refValue[0] = "Bye";
+console.log(value[0]); // Bye
+```
+
+## Keyed Collections
+Anahtarlı koleksiyonlar, indexe göre değil anahtara göre sıralanan veri koleksiyonlarıdır. Doğaları gereği ilişkiseldirler. Map ve set nesneleri anahtarlı koleksiyonlardır ve ekleme sırasına göre yinelenebilir.
+
+### Maps
+Map nesnesi basit bir anahtar/değer haritasıdır ve öğelerini ekleme sırasına göre yineleyebilir.
+
+Aşağıdaki kod, bir Harita ile yapılan bazı temel işlemleri göstermektedir. Daha fazla örnek ve API'nin tamamı için Map referans sayfasına da bakın. Her yineleme için bir `[key, value]`' dizisi döndürmek üzere bir for...of döngüsü kullanabilirsiniz.
+
+```
+const sayings = new Map();
+sayings.set("dog", "woof");
+sayings.set("cat", "meow");
+sayings.set("elephant", "toot");
+sayings.size; // 3
+sayings.get("dog"); // woof
+sayings.get("fox"); // undefined
+sayings.has("bird"); // false
+sayings.delete("dog");
+sayings.has("dog"); // false
+
+for (const [key, value] of sayings) {
+	console.log(`${key} goes ${value}`);
+}
+// "cat goes meow"
+// "elephant goes toot"
+sayings.clear();
+sayings.size; // 0
+
+```
+
+#### Object vs Map
+
+- Bir Nesnenin anahtarları strings veya symbol olur, burada bir Map için herhangi bir değer olabilirler. 
+```
+let obj = {};
+let map = new Map();
+let xObj = {x:1};
+obj[xObj] = 5;
+map.set(xObj, 5);
+console.log(obj) // { '[object Object]': 5 }
+console.log(map) // Map(1) { { x: 1 } => 5 }
+```
+
+- Bir Haritanın boyutunu kolayca alabilirsiniz, ancak bir Nesne için boyutu manuel olarak takip etmeniz gerekir.
+```
+console.log(obj.size) // undefined
+console.log(map.size) // 1
+```
+
+- Haritaların yinelenmesi, öğelerin yerleştirme sırasına göredir.
+```
+map.set(1, "one");
+map.forEach( el => console.log(el)); // 5 -> one
+obj[1] = 'one';
+console.log(obj); // { '1': 'one', '[object Object]': 5 }
+```
+
+#### weakMap
+Zayıf map  `map`'in kendisi güçlü bir şekilde `key`'i referanslar ancak weakMap zayıf referans yapar.
+```
+let weakMap = new WeakMap();
+let map1 = new Map();
+(function () {
+	let keyObj = { name: 'John' };
+	weakMap.set(keyObj, 'Value associated with John');
+	map1.set(keyObj, 'Value associated with John');
+	console.log(weakMap.get(keyObj)); // Value associated with John
+})();
+
+console.log(weakMap); // WeakMap { <items unknown> }
+console.log(map1); // Map(1) { { name: 'John' } => 'Value associated with John' }
+```
+
+Bu kodda weakMap garbage collector tarafından keyi siliniyor ancak map de herhangi bir değişiklik yoktur. **:** WeakMap nesnesinde anahtarlar arasında dolaşmak veya `size` gibi genel özelliklere erişmek mümkün değildir. WeakMap, sadece temel `set`, `get`, ve `delete` metodlarına sahiptir.
+
+### Set
+Set nesnesi, ister ilkel değerler ister nesne referansları olsun, her türden benzersiz değerleri saklamanıza olanak tanır. Ekleme sırasına göre yineleme yapabilirsiniz. Ekleme sırası, her bir öğenin `add()` methodu tarafından kümeye başarıyla eklendiği sıraya karşılık gelir.
+
+`has()` yöntemi, bir değerin kümede olup olmadığını kontrol eder ve ortalama olarak, kümeye daha önce eklenmiş olan öğelerin çoğunu test etmekten daha hızlı bir yaklaşım kullanır. Özellikle, bir dizi setin boyutuna eşit bir uzunluğa sahip olduğunda, ortalama olarak Array.prototype.includes yönteminden daha hızlıdır.
+
+```
+console.log(weakMap); // WeakMap { <items unknown> }
+console.log(map1); // Map(1) { { name: 'John' } => 'Value associated with John' }
+let set = new Set()
+	.add('red')
+	.add('green')
+	.add('blue');
+console.log(set); // Set(3) { 'red', 'green', 'blue' }
+set.add('red');
+console.log(set); // Set(3) { 'red', 'green', 'blue' }
+if (set.has('red')) { // using it before the add method improves performance
+	set.add('brown');
+}
+console.log(set); // Set(4) { 'red', 'green', 'blue', 'brown' }
+```
+
+`set`'in bazı kullanım yerleri:
+
+- **Tekrarlanan Değerleri Ortadan Kaldırmak:** Bir dizideki veya başka bir koleksiyonda tekrarlanan değerleri kaldırmak için kullanılabilir.
+```
+let numbers = [1, 2, 3, 4, 1, 2, 5];
+let uniqueNumbers = new Set(numbers); // Repeated values are automatically removed
+console.log([...uniqueNumbers]); // [1, 2, 3, 4, 5]
+```
+
+- **Eleman Varlığını Kontrol Etmek:** Bir elemanın set içinde olup olmadığını hızlı bir şekilde kontrol etmek için kullanılabilir.
+```
+let mySet = new Set([1, 2, 3]);
+console.log(mySet.has(2)); // true
+console.log(mySet.has(4)); // false
+```
+
+more details: https://exploringjs.com/impatient-js/ch_sets.html
+
