@@ -301,3 +301,31 @@ f2(); // static
 ```
 
 Burada `f1()` fonksiyonu çalıştığı zaman `a`  değerini arar ilk olarak kendi scope kapsamına bakar ondan sonrada bir dış scope kapsamına bakar dış scope kapsamında ise `a = 'static'` olduğu için çıktı normalde beklendiği gibi çalışmaya bilir.
+
+## Use Strict
+JavaScript uzun bir süre boyunca uyumluluk sorunları olmadan gelişti. Eski işlevsellik değişmezken dile yeni özellikler eklendi.
+
+Bunun mevcut kodu asla bozmama gibi bir avantajı vardı. Ancak dezavantajı, JavaScript'in yaratıcıları tarafından yapılan herhangi bir hata veya kusurlu bir kararın dilde sonsuza kadar sıkışıp kalmasıydı.
+
+ECMAScript 5'in (ES5) ortaya çıktığı 2009 yılına kadar durum böyleydi. Dile yeni özellikler ekledi ve mevcut özelliklerden bazılarını değiştirdi. Eski kodun çalışmasını sağlamak için, bu tür değişikliklerin çoğu varsayılan olarak kapalıdır. Bunları özel bir yönerge ile açıkça etkinleştirmeniz gerekir: "use strict".
+
+```
+try {
+	(function(){
+		"use strict";
+		x = 4;
+		console.log(x);
+	})();
+}catch (err) {
+	console.log(err.value); // undefined
+}
+
+try {
+	(function(){
+		x = 4;
+		console.log(x); // 4
+	})();
+}catch (err) {
+	console.log(err.value);
+}
+```
